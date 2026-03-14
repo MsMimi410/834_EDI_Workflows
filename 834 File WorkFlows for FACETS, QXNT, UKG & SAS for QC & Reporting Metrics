@@ -1,0 +1,83 @@
++----------------------+        +----------------------+        +----------------------+        +----------------------+
+|      UKG (HRIS)      |        |   EDI Gateway/TPA    |        |  Facets / QNXT       |        |        SAS           |
++----------------------+        +----------------------+        +----------------------+        +----------------------+
+          |                               |                               |                               |
+          | 1. Employee/HR updates data    |                               |                               |
+          |-------------------------------->|                               |                               |
+          |                               |                               |                               |
+          | 2. UKG validates event         |                               |                               |
+          |-------------------------------->|                               |                               |
+          |                               |                               |                               |
+          | 3. UKG generates 834 file      |                               |                               |
+          |-------------------------------->|                               |                               |
+          |                               |                               |                               |
+          |                               | 4. Gateway receives file       |                               |
+          |                               |-------------------------------->|                               |
+          |                               |                               |                               |
+          |                               | 5. TA1/999 validation          |                               |
+          |                               |-------------------------------->|                               |
+          |                               |                               |                               |
+          |                               | 6. File parsed to staging      |                               |
+          |                               |-------------------------------->|                               |
+          |                               |                               |                               |
+          |                               |                               | 7. Eligibility staging checks  |
+          |                               |                               |-------------------------------->|
+          |                               |                               |                               |
+          |                               |                               | 8. Load to production tables   |
+          |                               |                               |-------------------------------->|
+          |                               |                               |                               |
+          |                               |                               | 9. Eligibility updated         |
+          |                               |                               |-------------------------------->|
+          |                               |                               |                               |
+          |                               |                               |                               | 10. SAS pulls eligibility data
+          |                               |                               |                               |<--------------------------------
+          |                               |                               |                               |
+          |                               |                               |                               | 11. SAS runs analytics, QC, reporting
+          |                               |                               |                               |-------------------------------->
+          |                               |                               |                               |
+          |                               |                               |<-------------------------------| 12. SAS sends discrepancy reports
+          |                               |                               |                               |
+          |                               |<-------------------------------| 13. Carrier sends fallout list |
+          |                               |                               |                               |
+          |<-------------------------------| 14. UKG receives correction request                            |
+          |                               |                               |                               |
+          | 15. HR/UKG corrects data       |                               |                               |
+          |-------------------------------->|                               |                               |
+          |                               |                               |                               |
+          | 16. UKG regenerates 834        |                               |                               |
+          |-------------------------------->|                               |                               |
+          |                               |                               |                               |
+          |                               | 17. Gateway retransmits file   |                               |
+          |                               |-------------------------------->|                               |
+          |                               |                               |                               |
+          |                               |                               | 18. Updated eligibility loads  |
+          |                               |                               |-------------------------------->|
+          |                               |                               |                               |
+
+
+
+
+
+Mermaid....
+flowchart LR
+    UKG[UKG HRIS] -->|1. Update Data| GW[EDI Gateway]
+    UKG -->|2. Validate Event| GW
+    UKG -->|3. Generate 834| GW
+    GW -->|4. Receive File| FACETS[Facets/QNXT]
+    GW -->|5. TA1/999 Validation| FACETS
+    FACETS -->|6. Parse to Staging| FACETS
+    FACETS -->|7. Staging Checks| SAS[SAS Analytics]
+    FACETS -->|8. Load to Production| SAS
+    SAS -->|9. Pull Eligibility| SAS
+    SAS -->|10. QC & Reporting| FACETS
+    FACETS -->|11. Fallout List| GW
+    GW -->|12. Correction Request| UKG
+    UKG -->|13. Correct Data| GW
+    UKG -->|14. Regenerate 834| GW
+    GW -->|15. Retransmit File| FACETS
+
+
+
+
+
+          
